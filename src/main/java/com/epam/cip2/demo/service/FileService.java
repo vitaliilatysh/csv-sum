@@ -12,42 +12,32 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Service
 public class FileService {
 
-    public int sumTheColumn(CSVReader csvReader) {
-        int sum;
-
-        try {
-            sum = csvReader.readAll().stream()
-                    .flatMap(Arrays::stream)
-                    .mapToInt(Integer::parseInt)
-                    .sum();
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
-        return sum;
+    public int sumTheColumn(List<String[]> rows, int columnNumber) {
+        return rows.stream()
+                .map(row -> row[columnNumber])
+                .mapToInt(Integer::parseInt)
+                .sum();
     }
 
-    public CSVReader processFile(MultipartFile file) {
+    public List<String[]> getRows(MultipartFile file) {
 
         Path path = Paths.get(Objects.requireNonNull(file.getOriginalFilename()));
 
-        CSVReader csvReader;
         try (InputStream inputStream = file.getInputStream()) {
             Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
 
             Reader reader = Files.newBufferedReader(path);
-            csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
+            CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
 
-
+            return csvReader.readAll();
         } catch (IOException e) {
             throw new IllegalArgumentException(e.getMessage());
         }
-
-        return Objects.requireNonNull(csvReader);
     }
 }
