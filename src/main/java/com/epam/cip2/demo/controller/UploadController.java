@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 @RestController
@@ -16,7 +17,7 @@ public class UploadController {
     private FileService fileService;
 
     @PostMapping({"/sum"})
-    public String singleFileUpload(@RequestParam("file") MultipartFile file) {
+    public String singleFileUpload(@RequestParam("file") MultipartFile file) throws FileNotFoundException {
         List<String[]> rows = fileService.getRows(file);
         int sumValue = fileService.sumTheColumn(rows, 1);
 
