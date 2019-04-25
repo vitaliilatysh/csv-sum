@@ -1,7 +1,9 @@
 package com.epam.cip2.demo.controller;
 
+import com.epam.cip2.demo.service.FileService;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,36 +18,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.Objects;
 
 @RestController
 public class UploadController {
 
-    private Path rootLocation;
+    @Autowired
+    private FileService fileService;
 
     @PostMapping({"/upload"})
     public String singleFileUpload(@RequestParam("file") MultipartFile file) {
+        CSVReader csvReader = fileService.processFile(file);
+        int sumValue = fileService.sumTheColumn(csvReader);
 
-        int sum = 0;
-
-        String filename = StringUtils.cleanPath(file.getOriginalFilename());
-        Path path = Paths.get(filename);
-
-        try (InputStream inputStream = file.getInputStream()) {
-            Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
-
-            Reader reader = Files.newBufferedReader(path);
-            CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
-
-            sum = csvReader.readAll().stream()
-                    .flatMap(Arrays::stream)
-                    .mapToInt(Integer::parseInt)
-                    .sum();
-
-        } catch (IOException e) {
-            System.out.println();
-        }
-
-        return String.valueOf(sum);
+        return String.valueOf(sumValue);
     }
 
 }
