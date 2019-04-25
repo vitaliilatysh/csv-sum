@@ -1,34 +1,34 @@
 package com.epam.cip2.demo.exceptions;
 
-public class CsvReadException extends RuntimeException {
-    public CsvReadException() {
+public class CsvProcessException extends RuntimeException {
+    public CsvProcessException() {
     }
 
     /**
-     * Create a new CsvReadException
+     * Create a new CsvProcessException
      *
      * @param message the detail message
      */
-    public CsvReadException(String message) {
+    public CsvProcessException(String message) {
         super(message);
     }
 
     /**
-     * Create a new CsvReadException
+     * Create a new CsvProcessException
      *
      * @param cause the {@link Throwable} cause of exception
      */
-    public CsvReadException(Throwable cause) {
+    public CsvProcessException(Throwable cause) {
         super(cause);
     }
 
     /**
-     * Create a new CsvReadException
+     * Create a new CsvProcessException
      *
      * @param message the detail message
      * @param cause   the {@link Throwable} cause of exception
      */
-    public CsvReadException(String message, Throwable cause) {
+    public CsvProcessException(String message, Throwable cause) {
         super(message, cause);
     }
 }
