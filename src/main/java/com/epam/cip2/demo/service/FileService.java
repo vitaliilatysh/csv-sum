@@ -2,6 +2,7 @@ package com.epam.cip2.demo.service;
 
 import com.epam.cip2.demo.exceptions.CsvProcessException;
 import com.epam.cip2.demo.exceptions.FileNotFoundException;
+import com.epam.cip2.demo.exceptions.NoColumnNameFoundException;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import org.apache.commons.io.FilenameUtils;
@@ -17,25 +18,33 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
-import static com.epam.cip2.demo.constant.MessageConstants.CSV;
-import static com.epam.cip2.demo.constant.MessageConstants.ERROR_PROCESSING_CSV;
-import static com.epam.cip2.demo.constant.MessageConstants.NOT_CSV_FILE;
-import static com.epam.cip2.demo.constant.MessageConstants.NO_FILE_UPLOAD;
+import static com.epam.cip2.demo.constant.MessageConstants.*;
 
 @Service
 public class FileService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileService.class);
 
-
-    public int sumTheColumn(List<String[]> rows, int columnNumber) {
-        return rows.stream()
-                .map(row -> row[columnNumber])
-                .mapToInt(Integer::parseInt)
+    public double totalSum(List<String[]> rows, int columnIndex) {
+        return rows.stream().skip(1)
+                .map(row -> row[columnIndex])
+                .mapToDouble(Double::parseDouble)
                 .sum();
+    }
+
+    public int getColumnIndex(List<String[]> rows, String columnName) {
+        String[] headers = rows.get(0);
+        for (int columnIndex = 0; columnIndex < headers.length; columnIndex++) {
+            if(headers[columnIndex].equalsIgnoreCase(columnName)){
+                return columnIndex;
+            }
+        }
+        throw new NoColumnNameFoundException(NO_SUCH_COLUMN_FOUND);
     }
 
     public List<String[]> getRows(MultipartFile file) {
@@ -50,7 +59,7 @@ public class FileService {
             Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
 
             Reader reader = Files.newBufferedReader(path);
-            CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
+            CSVReader csvReader = new CSVReaderBuilder(reader).build();
 
             return csvReader.readAll();
         } catch (IOException e) {

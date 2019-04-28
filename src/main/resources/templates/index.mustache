@@ -5,8 +5,15 @@
 <h1>Spring Boot file upload example</h1>
 
 <form action="sum" enctype="multipart/form-data" method="post">
-    <input type="file" name="file" /><br/><br/>
+    <input type="file" name="file" />
+    <input type="text" name="column" placeholder="Type column name:"/><br/><br/>
     <input type="submit" value="Sum" />
 </form>
+{{#total_sum}}
+    {{.}}
+{{/total_sum}}
+{{#error}}
+    {{.}}
+{{/error}}
 </body>
 </html>
