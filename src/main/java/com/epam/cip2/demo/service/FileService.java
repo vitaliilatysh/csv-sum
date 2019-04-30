@@ -18,10 +18,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 import static com.epam.cip2.demo.constant.MessageConstants.*;
 
@@ -40,7 +38,7 @@ public class FileService {
     public int getColumnIndex(List<String[]> rows, String columnName) {
         String[] headers = rows.get(0);
         for (int columnIndex = 0; columnIndex < headers.length; columnIndex++) {
-            if(headers[columnIndex].equalsIgnoreCase(columnName)){
+            if (headers[columnIndex].equalsIgnoreCase(columnName)) {
                 return columnIndex;
             }
         }
